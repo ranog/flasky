@@ -38,7 +38,8 @@
     </div>
 {% endblock %}
 
-{%block scripts %}
+{% block scripts %}
     {{ super() }}
     {{ moment.include_moment() }}
+    {{ moment.locale('es') }}
 {% endblock %}
