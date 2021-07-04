@@ -7,9 +7,12 @@ bootstrap = Bootstrap(app)
 from flask_moment import Moment
 moment = Moment(app)
 
+from datetime import datetime
+
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', curren_time=datetime.utcnow())
 
 
 @app.route('/user/<name>')
