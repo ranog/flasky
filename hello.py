@@ -4,13 +4,14 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'hard to guess string'
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
 
 @app.route('/')
 def index():
-    return render_template('index.html', current_time=datetime.utcnow())
+    return render_template('index.html')
 
 
 @app.route('/user/<name>')
