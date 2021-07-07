@@ -1,9 +1,13 @@
+import os
 from flask import Flask, render_template, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class NameForm(FlaskForm):
@@ -12,10 +16,15 @@ class NameForm(FlaskForm):
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(
+    basedir,
+    'data.sqlite'
+)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'hard to guess string'
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-
+db = SQLAlchemy(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
