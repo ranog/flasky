@@ -13,6 +13,7 @@ from wtforms.validators import DataRequired
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+app.config['FLASKY_ADMIN'] = os.environ.get('FLASKY_ADMIN')
 app.config['FLASKY_MAIL_SUBJECT_PREFIX'] = '[Flasky]'
 app.config['FLASKY_MAIL_SENDER'] = 'Flasky Admin <flasky@example.com>'
 app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
@@ -65,8 +66,14 @@ def index():
         if user is None:
             user = User(username=form.name.data)
             db.session.add(user)
-            db.session.commit()
             session['known'] = False
+            if app.config['FLASKY_ADMIN']:
+                send_email(
+                    app.config['FLASKY_ADMIN'],
+                    'New User',
+                    'mail/new_user',
+                    user=user,
+                )
         else:
             session['known'] = True
         session['name'] = form.name.data
