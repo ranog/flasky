@@ -1,7 +1,8 @@
-from enum import unique
 from app import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from . import login_manager
+
 
 
 class Role(db.Model):
@@ -12,6 +13,11 @@ class Role(db.Model):
 
     def __repr__(self):
         return '<Role %r>' % self.name
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 class User(UserMixin, db.Model):
