@@ -9,12 +9,19 @@ from ..email import send_email
 from ..models import User
 
 
+def _not_confirmed_email(current_user, request):
+    if current_user.is_authenticated:
+        return all([
+            not current_user.confirmed,
+            request.blueprint != 'auth',
+            request.endpoint != 'static',
+        ])
+    return False
+
+
 @auth.before_app_request
 def before_request():
-    if current_user.is_authenticated \
-            and not current_user.confirmed \
-            and request.blueprint != 'auth' \
-            and request.endpoint != 'static':
+    if _not_confirmed_email(current_user, request):
         return redirect(url_for('auth.unconfirmed'))
 
 
