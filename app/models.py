@@ -1,9 +1,16 @@
-from operator import index
 from flask import current_app
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import login_manager, db
+
+
+class Permission:
+    FOLLOW = 1
+    COMMENT = 2
+    WRITE = 4
+    MODERATE = 8
+    ADMIN = 16
 
 
 class Role(db.Model):
@@ -54,13 +61,14 @@ class User(UserMixin, db.Model):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token.encode('utf-8'))
-        except:
+        except: # NOQA
             return False
         if data.get('confirm') != self.id:
             return False
         self.confirm = True
         db.session.add(self)
         return True
+
 
 @login_manager.user_loader
 def load_user(user_id):
