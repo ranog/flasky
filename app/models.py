@@ -21,6 +21,36 @@ class Role(db.Model):
     permissions = db.Column(db.Integer)
     users = db.relationship('User', backref='role', lazy='dynamic')
 
+    @staticmethod
+    def insert_roles():
+        roles = {
+            'User': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
+            'Moderator': [
+                Permission.FOLLOW,
+                Permission.COMMENT,
+                Permission.WRITE,
+                Permission.MODERATE,
+            ],
+            'Administrator': [
+                Permission.FOLLOW,
+                Permission.COMMENT,
+                Permission.WRITE,
+                Permission.MODERATE,
+                Permission.ADMIN
+            ],
+        }
+        default_role = 'User'
+        for r in roles:
+            role = Role.query.filter_by(name=r).first()
+            if role is None:
+                role = Role(name=r)
+            role.remove_permission()
+            for perm in roles[r]:
+                role.add_permission(perm)
+            role.default = (role.name == default_role)
+            db.session.add(role)
+        db.session.commit()
+
     def __init__(self, **kwargs):
         super(Role, self).__init__(**kwargs)
         if self.permissions is None:
@@ -37,7 +67,7 @@ class Role(db.Model):
     def reset_permissions(self):
         self.permissions = 0
 
-    def has_permissions(self, perm):
+    def has_permission(self, perm):
         return self.permissions & perm == perm
 
     def __repr__(self):
