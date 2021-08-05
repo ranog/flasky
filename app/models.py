@@ -26,6 +26,20 @@ class Role(db.Model):
         if self.permissions is None:
             self.permissions = 0
 
+    def add_permission(self, perm):
+        if not self.has_permission(perm):
+            self.permissions += perm
+
+    def remove_permission(self, perm):
+        if not self.has_permission(perm):
+            self.permissions -= perm
+
+    def reset_permissions(self):
+        self.permissions = 0
+
+    def has_permissions(self, perm):
+        return self.permissions & perm == perm
+
     def __repr__(self):
         return '<Role %r>' % self.name
 
