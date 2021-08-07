@@ -36,7 +36,7 @@ class Role(db.Model):
                 Permission.COMMENT,
                 Permission.WRITE,
                 Permission.MODERATE,
-                Permission.ADMIN
+                Permission.ADMIN,
             ],
         }
         default_role = 'User'
@@ -44,7 +44,7 @@ class Role(db.Model):
             role = Role.query.filter_by(name=r).first()
             if role is None:
                 role = Role(name=r)
-            role.remove_permission()
+            role.reset_permissions()
             for perm in roles[r]:
                 role.add_permission(perm)
             role.default = (role.name == default_role)
@@ -113,7 +113,7 @@ class User(UserMixin, db.Model):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token.encode('utf-8'))
-        except:
+        except:  # NOQA
             return False
         if data.get('confirm') != self.id:
             return False
