@@ -1,7 +1,6 @@
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, login_required, current_user
 from flask_login.utils import logout_user
-from werkzeug.wrappers import response
 from . import auth
 from .. import db
 from .forms import LoginForm, RegistrationForm
@@ -9,20 +8,15 @@ from ..email import send_email
 from ..models import User
 
 
-def _not_confirmed_email(current_user, request):
-    if current_user.is_authenticated:
-        return all([
-            not current_user.confirmed,
-            request.blueprint != 'auth',
-            request.endpoint != 'static',
-        ])
-    return False
-
-
 @auth.before_app_request
 def before_request():
-    if _not_confirmed_email(current_user, request):
-        return redirect(url_for('auth.unconfirmed'))
+    if current_user.is_authenticated:
+        current_user.ping()
+        if not current_user.confirmed \
+                and request.endpoint \
+                and request.blueprint != 'auth' \
+                and request.endpoint != 'static':
+            return redirect(url_for('auth.unconfirmed'))
 
 
 @auth.route('/unconfirmed')
