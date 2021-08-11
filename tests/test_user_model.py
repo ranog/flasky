@@ -1,10 +1,11 @@
 import time
-import unittest
+
 from app import db
 from app.models import AnonymousUser, Permission, User
+from tests.test_basics import BasicsTestCase
 
 
-class UserModelTestCase(unittest.TestCase):
+class UserModelTestCase(BasicsTestCase):
 
     def test_password_setter(self):
         u = User(password='cat')
