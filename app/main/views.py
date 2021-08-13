@@ -1,23 +1,11 @@
-from datetime import datetime
-from flask import render_template, session, redirect, url_for
+from flask import render_template
 from . import main
-from .forms import NameForm
 from ..models import User
 
 
-@main.route('/', methods=['GET', 'POST'])
+@main.route('/')
 def index():
-    form = NameForm()
-    if form.validate_on_submit():
-        # ...
-        return redirect(url_for('.index'))
-    return render_template(
-        'index.html',
-        form=form,
-        name=session.get('name'),
-        known=session.get('known', False),
-        current_time=datetime.utcnow(),
-    )
+    return render_template('index.html')
 
 
 @main.route('/user/<username>')
