@@ -13,10 +13,10 @@ from .. import db
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = PostForm()
-    if current_user.can(Permission.WRITE_ARTICLES) and form.validate_on_submit():  # NOQA
+    if current_user.can(Permission.WRITE) and form.validate_on_submit():
         post = Post(
             body=form.body.data,
-            author=current_user._get_current_object()
+            author=current_user._get_current_object(),
         )
         db.session.add(post)
         db.session.commit()
@@ -69,7 +69,7 @@ def edit_profile_admin(id):
         db.session.add(User)
         db.session.commit()
         flash('The profile has been updated.')
-        return redirect(url_for('user', username=user.username))
+        return redirect(url_for('.user', username=user.username))
     form.email.data = user.email
     form.username.data = user.username
     form.confirmed.data = user.confirmed
