@@ -24,6 +24,11 @@ class Role(db.Model):
     permissions = db.Column(db.Integer)
     users = db.relationship('User', backref='role', lazy='dynamic')
 
+    def __init__(self, **kwargs):
+        super(Role, self).__init__(**kwargs)
+        if self.permissions is None:
+            self.permissions = 0
+
     @staticmethod
     def insert_roles():
         roles = {
@@ -54,17 +59,12 @@ class Role(db.Model):
             db.session.add(role)
         db.session.commit()
 
-    def __init__(self, **kwargs):
-        super(Role, self).__init__(**kwargs)
-        if self.permissions is None:
-            self.permissions = 0
-
     def add_permission(self, perm):
         if not self.has_permission(perm):
             self.permissions += perm
 
     def remove_permission(self, perm):
-        if not self.has_permission(perm):
+        if self.has_permission(perm):
             self.permissions -= perm
 
     def reset_permissions(self):
@@ -75,14 +75,6 @@ class Role(db.Model):
 
     def __repr__(self):
         return '<Role %r>' % self.name
-
-
-class Post(db.Model):
-    __tablename__ = 'posts'
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 class User(UserMixin, db.Model):
@@ -100,9 +92,6 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
-
-    def __repr__(self):
-        return '<User %r>' % self.username
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -187,6 +176,9 @@ class User(UserMixin, db.Model):
             rating=rating
         )
 
+    def __repr__(self):
+        return '<User %r>' % self.username
+
 
 class AnonymousUser(AnonymousUserMixin):
 
@@ -203,3 +195,11 @@ login_manager.anonymous_user = AnonymousUser
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
