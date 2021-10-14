@@ -1,7 +1,13 @@
-from flask import render_template, redirect, url_for, flash, current_app
+from flask import (
+    render_template,
+    redirect,
+    url_for,
+    flash,
+    current_app,
+    request,
+)
 from flask_login import login_required, current_user
 from werkzeug.exceptions import abort
-from werkzeug.wrappers import request
 
 from .forms import EditProfileAdminForm, EditProfileForm, PostForm
 from ..decorators import admin_required
@@ -29,7 +35,12 @@ def index():
             erro_out=False,
         )
     posts = pagination.items
-    return render_template('index.html', form=form, posts=posts)
+    return render_template(
+        'index.html',
+        form=form,
+        posts=posts,
+        pagination=pagination,
+    )
 
 
 @main.route('/user/<username>')
