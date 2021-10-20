@@ -1,7 +1,7 @@
-from typing_extensions import Required
 from app.models import Role, User
 from flask_pagedown.fields import PageDownField
 from flask_wtf.form import FlaskForm
+from typing_extensions import Required
 from wtforms.fields.core import BooleanField, SelectField, StringField
 from wtforms.fields.simple import SubmitField, TextAreaField
 from wtforms.validators import (
