@@ -1,12 +1,11 @@
-from flask import Flask, request
+from flask import Flask
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def index():
-    user_agent = request.headers.get('User-Agent')
-    return f'<p>Your browser is {user_agent}</p>'
+    return '<h1>Bad Request</h1>', 400
 
 
 @app.route('/user/<name>')
