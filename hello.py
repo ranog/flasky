@@ -1,13 +1,13 @@
-from flask import Flask, redirect
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def index():
-    return redirect('http://www.example.com')
+    return render_template('index.html')
 
 
 @app.route('/user/<name>')
 def user(name):
-    return f'<h1>Hello, {name.title()}!</h1>'
+    return render_template('user.html', name=name.title())
