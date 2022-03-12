@@ -1,0 +1,29 @@
+<!-- conditional statements -->
+
+{% if user %}
+    Hello, {{ user|capitalize }}!
+{% else %}
+    Hello, Stranger!
+{% endif %}
+
+
+<!-- for loop -->
+
+<ul>
+    {% for comment in comments %}
+        <li>{{ comment }}</li>
+    {% endfor %}
+</ul>>
+
+
+<!-- macros -->
+
+{% macro render_comment(comment) %}
+    <li>{{ comment }}</li>
+{% endmacro %}
+
+<ul>
+    {% for comment in comments %}
+        {{ render_comment(comment) }}
+    {% endfor %}
+</ul>
