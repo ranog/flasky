@@ -17,13 +17,9 @@
 
 
 <!-- macros -->
-
-{% macro render_comment(comment) %}
-    <li>{{ comment }}</li>
-{% endmacro %}
-
+{% import 'macros.html' as macros %}
 <ul>
     {% for comment in comments %}
-        {{ render_comment(comment) }}
+        {{ macros.render_comment(comment) }}
     {% endfor %}
 </ul>
